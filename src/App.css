@@ -1,38 +1,41 @@
 .App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+  text-align: center; /* 将文本对齐设置为居中 */
+  background-color: #282c34; /* 背景颜色，与你的图1相匹配 */
+  min-height: 100vh; /* 使应用至少与视口一样高 */
+  display: flex; /* 使用flexbox进行布局 */
+  flex-direction: column; /* 元素垂直排列 */
+  align-items: center; /* 水平居中对齐子元素 */
+  justify-content: center; /* 垂直居中对齐子元素 */
+  font-size: calc(10px + 2vmin); /* 字体大小动态调整 */
+  color: white; /* 文本颜色 */
 }
 
 .App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  width: 100%; /* 设置App-header宽度为100% */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  margin: 10px;
 }
 
-.App-link {
-  color: #61dafb;
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 水平居中对齐 */
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* 确保文字和输入框左对齐 */
+  width: 100%; /* 设置label宽度为100% */
+}
+
+input[type="text"], input[type="file"], button {
+  width: 100%; /* 设置输入框和按钮的宽度为100% */
+  max-width: 300px; /* 设置最大宽度为300px */
+}
+
+button {
+  margin-top: 10px; /* 提交按钮顶部的外边距 */
 }
