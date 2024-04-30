@@ -28,7 +28,7 @@ This application allows users to upload a text input and a file to AWS S3, then 
 
 1. Clone the repository to your local machine.
    ```bash
-   git clone <repository-url>
+   git clone [<repository-url>](https://github.com/Zhihong9863/fovusAWS.git)
    ```
 2. Navigate into the project directory.
    ```bash
@@ -73,6 +73,8 @@ Before starting, create an IAM role named `Fovus-S3-Role` or any other roles you
 2. Create a new role and select AWS Lambda as the service that will use this role.
 3. Attach the `AmazonS3FullAccess` policy to grant full access to S3 resources.
 4. Name the role `Fovus-S3-Role`.
+5. ![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/69622dba-dcdc-43fd-a941-9b719d13e361)
+
 
 ### S3 Bucket Creation
 The S3 bucket does not need to be created manually. A unique bucket will be automatically generated for each user upon file upload based on a UUID.
@@ -81,19 +83,23 @@ The S3 bucket does not need to be created manually. A unique bucket will be auto
 
 ### API Gateway Setup
 1. Go to the API Gateway Console.
-2. Create a new API if you don’t have one already.
+2. Create a new API if you don’t have one already. Mine is called FovusAPI
 3. Define a new resource `/presigned-url`.
-4. Add GET and PUT methods to the `/presigned-url` resource.
+4. ![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/1aaa09ed-b085-4499-a79d-2d474a69620b)
+5. Add GET and PUT methods to the `/presigned-url` resource.
    - Ensure `Proxy integration` is enabled for both methods.
    - For the PUT method, add required URL query string parameters:
      - `fileName`
      - `uuid`
+![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/d84102c8-fc45-4fd7-9036-21791227be88)
 
 ### CORS Configuration
 Make sure to enable CORS by checking all options. This is crucial to resolving cross-origin resource sharing issues.
+![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/0adfb6c4-e428-436f-82c6-5123ef246909)
 
 ### Deploy API
-After making any changes or upon completing the setup, deploy your API to receive an endpoint URL. If you wish, you can customize the resource path to your preference.
+1. After making any changes or upon completing the setup, deploy your API to receive an endpoint URL. If you wish, you can customize the resource path to your preference.
+2. Here is my API path, please change yourself and remember add the path you defined "https://hwfncn3pc3.execute-api.us-east-2.amazonaws.com/dev/presigned-url"
 
 ## Lambda Function Creation
 
@@ -102,7 +108,9 @@ Create a Lambda function named `PresignedURLFunction`.
 
 1. In the configuration tab, navigate to `Permissions`.
 2. Attach the `Fovus-S3-Role` to the function’s execution role.
-3. In the `Trigger` section, set up triggers for the GET and PUT methods from your API Gateway.
+3. ![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/1a52541d-2abe-4f5f-bf94-7b9674f38e8e)
+4. In the `Trigger` section, set up triggers for the GET and PUT methods from your API Gateway.
+5. ![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/7714e78f-5cca-483e-95b4-ef09b3e1627a)
 
 ### Function Code
 Copy and paste the code for generating presigned URLs into the Lambda function's code editor.
