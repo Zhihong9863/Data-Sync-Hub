@@ -3,10 +3,22 @@ import { v4 as uuidv4 } from 'uuid';
 import './App.css';
 
 function App() {
+
   const [inputText, setInputText] = useState(''); 
   const [selectedFile, setSelectedFile] = useState(null); 
   const [userUUID, setUserUUID] = useState('');
 
+  /**
+   * Because it is required that each user has their own S3 bucket, 
+   * and we have not created a login interface and corresponding code logic, 
+   * the simplest method is for users to automatically assign a uuid when starting a project, 
+   * which distinguishes different users. This is also the quickest way to handle this problem
+   * 
+   * The code strategy is as follows
+    1. The front-end automatically generates a UUID to identify the user every time it refreshes, 
+    and when calling the lambda function, the UUID is included.
+    2. In the lambda function, if the corresponding bucket has not been created, create the bucket based on UUID first
+   */
   useEffect(() => {
     // Generate UUID during component mounting and only once
     setUserUUID(uuidv4());
@@ -21,12 +33,14 @@ function App() {
     setSelectedFile(event.target.files[0]);
   };
 
+  //We need to first create a path in the API gateway, one to obtain the pre signature and the other to insert data into our dynamodb
   const apiEndpoint_presigned = 'https://hwfncn3pc3.execute-api.us-east-2.amazonaws.com/dev/presigned-url';
   const apiEndpoint_file = 'https://hwfncn3pc3.execute-api.us-east-2.amazonaws.com/dev/file';
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    //For simplicity, I just use alert to warn the user
     if (!selectedFile) {
       alert('Please select a file.');
       return;
@@ -65,6 +79,7 @@ function App() {
         }
       });
 
+      //Ensure that we insert the data into Dynamodb after successfully uploading to S3
       if (uploadResponse.ok) {
 
         console.log('File successfully uploaded to S3.');

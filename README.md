@@ -6,65 +6,143 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 In the project directory, you can run:
 
-### `npm start`
+### ``
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+# Fovus Web Application
 
-### `npm run build`
+This application allows users to upload a text input and a file to AWS S3, then processes the file in an EC2 instance, and finally records the data in a DynamoDB table.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Prerequisites
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- AWS Account
+- Node.js installed
+- AWS CLI configured with Administrator access
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Setup Instructions
 
-### `npm run eject`
+1. Clone the repository to your local machine.
+   ```bash
+   git clone <repository-url>
+   ```
+2. Navigate into the project directory.
+   ```bash
+   cd <project-name>
+   ```
+3. Install the necessary Node.js packages.
+   ```bash
+   npm install
+   ```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Running the Application
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. Start the React application.
+   ```bash
+   npm start
+   ```
+   The application will be available at `http://localhost:3000`.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+2. Upload a file and input text using the web UI.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+3. The application will:
+   - Generate a UUID for the user session.
+   - Get a presigned S3 URL to upload the file directly from the browser.
+   - Save the input text and file reference to DynamoDB.
 
-## Learn More
+## AWS Configuration Step 1
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+1. Set up the necessary AWS services:
+   - S3 Bucket: You don't need to manually create a `[S3 Bucket]` because after the project starts, when you upload files, a uuid will be automatically generated and a bucket will be created automatically.
+   - DynamoDB Table: Create a table named `fovusDB` with `id` as the primary key.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+2. Configure Lambda functions to handle API Gateway requests.
+   - Lambda for presigned URL creation.
+   - Lambda for saving input to DynamoDB.
 
-### Code Splitting
+## Step 1 details: AWS Configuration for S3 and IAM
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### IAM Role Setup
+Before starting, create an IAM role named `Fovus-S3-Role` or any other roles you love that will grant the necessary permissions to the Lambda function to interact with S3.
 
-### Analyzing the Bundle Size
+1. Navigate to the IAM Management Console in AWS.
+2. Create a new role and select AWS Lambda as the service that will use this role.
+3. Attach the `AmazonS3FullAccess` policy to grant full access to S3 resources.
+4. Name the role `Fovus-S3-Role`.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### S3 Bucket Creation
+The S3 bucket does not need to be created manually. A unique bucket will be automatically generated for each user upon file upload based on a UUID.
 
-### Making a Progressive Web App
+## Presigned URL Lambda Function
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### API Gateway Setup
+1. Go to the API Gateway Console.
+2. Create a new API if you don’t have one already.
+3. Define a new resource `/presigned-url`.
+4. Add GET and PUT methods to the `/presigned-url` resource.
+   - Ensure `Proxy integration` is enabled for both methods.
+   - For the PUT method, add required URL query string parameters:
+     - `fileName`
+     - `uuid`
 
-### Advanced Configuration
+### CORS Configuration
+Make sure to enable CORS by checking all options. This is crucial to resolving cross-origin resource sharing issues.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Deploy API
+After making any changes or upon completing the setup, deploy your API to receive an endpoint URL. If you wish, you can customize the resource path to your preference.
 
-### Deployment
+## Lambda Function Creation
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Function Setup
+Create a Lambda function named `PresignedURLFunction`.
 
-### `npm run build` fails to minify
+1. In the configuration tab, navigate to `Permissions`.
+2. Attach the `Fovus-S3-Role` to the function’s execution role.
+3. In the `Trigger` section, set up triggers for the GET and PUT methods from your API Gateway.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Function Code
+Copy and paste the code for generating presigned URLs into the Lambda function's code editor.
+
+- The code can be written in JavaScript as `.mjs` files without needing to upload a ZIP, since no external libraries are required.
+- Once ready, deploy the function.
+
+### Testing the Lambda Function
+Test your Lambda function with the following sample event:
+
+```json
+{
+  "httpMethod": "GET",
+  "queryStringParameters": {
+    "fileName": "example.txt",
+    "userUUID": "123e4567-e89b-12d3-a456-426614174000"
+  }
+}
+
+## Processing Script on EC2
+
+1. The EC2 instance is triggered via a DynamoDB event.
+   - The instance will be created with the required IAM roles.
+   - A startup script will handle the processing:
+     1. Download the file from S3.
+     2. Retrieve inputs from DynamoDB.
+     3. Append the text input to the file.
+     4. Upload the processed file back to S3.
+     5. Record the output details in DynamoDB.
+
+2. The EC2 instance will terminate upon completion of the script.
+
+## Clean Up
+
+1. To avoid incurring unintended costs, make sure to delete the created AWS resources:
+   - S3 buckets
+   - DynamoDB tables
+   - EC2 instances
+
+## Support
+
+For any queries or issues, please open an issue on the GitHub repository.
+

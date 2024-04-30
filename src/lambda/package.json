@@ -1,0 +1,27 @@
+{
+    "name": "fovus-lambda-functions",
+    "version": "1.0.0",
+    "description": "A serverless application for handling file uploads to S3 and recording data in DynamoDB.",
+    "main": "index.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+      "AWS",
+      "Lambda",
+      "S3",
+      "DynamoDB",
+      "API Gateway",
+      "React",
+      "Serverless"
+    ],
+    "author": "Zhihong",
+    "license": "ISC",
+    "dependencies": {
+      "@aws-sdk/client-s3": "^3.564.0",
+      "@aws-sdk/s3-request-presigner": "^3.564.0",
+      "@aws-sdk/client-dynamodb": "^3.564.0",
+      "nanoid": "^3.1.23"
+    }
+  }
+  
