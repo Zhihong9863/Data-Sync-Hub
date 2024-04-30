@@ -184,7 +184,7 @@ Test your Lambda function with the following sample event:
 
 ### IAM Roles Creation
 
-1. **Lambda Role (lambdaEC2):**
+1. **Lambda Role (launchEC2):**
    - Create an IAM role `lambdaEC2` for the Lambda function that triggers the EC2 instance.
    - Use the following policy to grant the Lambda function permissions to interact with various AWS services. This includes EC2 for instance creation/termination, logging for CloudWatch logs, and SNS for notifications if required:
 
@@ -231,6 +231,8 @@ Test your Lambda function with the following sample event:
 }
 ```
    - Attach additional policies for full DynamoDB and S3 access.
+![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/11c3a934-6232-4e3b-b064-849a78f7cabc)
+
 
 2. **EC2 Role (launchEC2_second):**
    - Create another IAM role `launchEC2_second` for the EC2 instances to be launched.
@@ -254,11 +256,16 @@ Test your Lambda function with the following sample event:
 	]
 }
 ```
+![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/8e2c03d2-144a-44f6-9a28-b45d046bf25a)
+
+
 ### Lambda Function Setup for Triggering EC2 Instances
 3. Set up a Lambda function named ProcessFileFunction.
    - Under the Configuration tab, assign the `lambdaEC2` role to the function’s execution role.
    - Configure the DynamoDB `fovusDB` table as a trigger for this Lambda function.
    - Ensure the trigger is set for new item creation events.
+![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/e26c1ec7-d4e0-4a0b-a830-d6a81693dca1)
+![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/18277479-9fb6-4e84-a7ec-0c16d157777b)
 
 
 ### EC2 Instance Scripting
