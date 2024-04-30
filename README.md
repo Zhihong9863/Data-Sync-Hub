@@ -73,7 +73,7 @@ Before starting, create an IAM role named `Fovus-S3-Role` or any other roles you
 2. Create a new role and select AWS Lambda as the service that will use this role.
 3. Attach the `AmazonS3FullAccess` policy to grant full access to S3 resources.
 4. Name the role `Fovus-S3-Role`.
-5. ![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/69622dba-dcdc-43fd-a941-9b719d13e361)
+![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/69622dba-dcdc-43fd-a941-9b719d13e361)
 
 
 ### S3 Bucket Creation
@@ -88,7 +88,7 @@ The S3 bucket does not need to be created manually. A unique bucket will be auto
 4. ![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/1aaa09ed-b085-4499-a79d-2d474a69620b)
 5. Add GET and PUT methods to the `/presigned-url` resource.
    - Ensure `Proxy integration` is enabled for both methods.
-   - For the PUT method, add required URL query string parameters:
+   - For the GET method, add required URL query string parameters:
      - `fileName`
      - `uuid`
 ![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/d84102c8-fc45-4fd7-9036-21791227be88)
@@ -108,9 +108,10 @@ Create a Lambda function named `PresignedURLFunction`.
 
 1. In the configuration tab, navigate to `Permissions`.
 2. Attach the `Fovus-S3-Role` to the function’s execution role.
-3. ![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/1a52541d-2abe-4f5f-bf94-7b9674f38e8e)
-4. In the `Trigger` section, set up triggers for the GET and PUT methods from your API Gateway.
-5. ![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/7714e78f-5cca-483e-95b4-ef09b3e1627a)
+![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/47e3cb6c-17a1-4348-99fa-0593ea4b46af)
+3. In the `Trigger` section, set up triggers for the GET and PUT methods from your API Gateway.
+![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/2e55e00b-c9d5-46ba-b7eb-5f4bafa41e4b)
+
 
 ### Function Code
 Copy and paste the code for generating presigned URLs into the Lambda function's code editor.
@@ -129,8 +130,9 @@ Test your Lambda function with the following sample event:
     "userUUID": "123e4567-e89b-12d3-a456-426614174000"
   }
 }
+```
 
-## Processing Script on EC2
+### Processing Script on EC2
 
 1. The EC2 instance is triggered via a DynamoDB event.
    - The instance will be created with the required IAM roles.
