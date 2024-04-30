@@ -85,13 +85,13 @@ The S3 bucket does not need to be created manually. A unique bucket will be auto
 1. Go to the API Gateway Console.
 2. Create a new API if you don’t have one already. Mine is called FovusAPI
 3. Define a new resource `/presigned-url`.
-4. ![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/1aaa09ed-b085-4499-a79d-2d474a69620b)
-5. Add GET and PUT methods to the `/presigned-url` resource.
+![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/1aaa09ed-b085-4499-a79d-2d474a69620b)
+4. Add GET and PUT methods to the `/presigned-url` resource.
    - Ensure `Proxy integration` is enabled for both methods.
    - For the GET method, add required URL query string parameters:
      - `fileName`
      - `uuid`
-6. ![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/d84102c8-fc45-4fd7-9036-21791227be88)
+![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/d84102c8-fc45-4fd7-9036-21791227be88)
 
 ### CORS Configuration
 Make sure to enable CORS by checking all options. This is crucial to resolving cross-origin resource sharing issues.
@@ -171,6 +171,7 @@ Test your Lambda function with the following sample event:
    - Add a `POST` method to the `/file` resource.
    - Enable `Proxy integration` for the method.
    - Set up CORS by enabling it just as you did with the previous resource.
+   - Here is my API path, please change yourself and remember add the path you defined "[https://hwfncn3pc3.execute-api.us-east-2.amazonaws.com/dev/presigned-url](https://hwfncn3pc3.execute-api.us-east-2.amazonaws.com/dev/file)"
 ![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/e7ae29e4-d5ac-48e3-a599-483a35820e34)
 
 ### Lambda Function for Data Insertion
