@@ -1,19 +1,3 @@
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### ``
-
-
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-
 # Fovus Web Application
 
 This application allows users to upload a text input and a file to AWS S3, then processes the file in an EC2 instance, and finally records the data in a DynamoDB table.
@@ -28,7 +12,7 @@ This application allows users to upload a text input and a file to AWS S3, then 
 
 1. Clone the repository to your local machine.
    ```bash
-   git clone [<repository-url>](https://github.com/Zhihong9863/fovusAWS.git)
+   git clone (https://github.com/Zhihong9863/fovusAWS.git)
    ```
 2. Navigate into the project directory.
    ```bash
@@ -49,20 +33,20 @@ This application allows users to upload a text input and a file to AWS S3, then 
 
 2. Upload a file and input text using the web UI.
 
-3. The application will:
-   - Generate a UUID for the user session.
-   - Get a presigned S3 URL to upload the file directly from the browser.
-   - Save the input text and file reference to DynamoDB.
+## AWS Configuration and Automation Flow
 
-## AWS Configuration Step 1 and Step 2
+1. S3 Bucket & DynamoDB Table:
+   - A unique `S3 Bucket` is automatically created when you start the project and upload files, identified by a `UUID`.
+   - A DynamoDB table named `fovusDB` is to be set up with `id` as the primary key for storing file metadata.
 
-1. Set up the necessary AWS services:
-   - S3 Bucket: You don't need to manually create a `[S3 Bucket]` because after the project starts, when you upload files, a uuid will be automatically generated and a bucket will be created automatically.
-   - DynamoDB Table: Create a table named `fovusDB` with `id` as the primary key.
+2. Lambda Function Integration:
+   - A Lambda function is configured to generate presigned URLs, allowing secure, direct file uploads to the S3 Bucket.
+   - Another Lambda function is established to record the input text and file metadata into the fovusDB table after the upload.
 
-2. Configure Lambda functions to handle API Gateway requests.
-   - Lambda for presigned URL creation.
-   - Lambda for saving input to DynamoDB.
+2. EC2 Processing Triggered by DynamoDB:
+   - Upon a new file upload and DynamoDB entry, a Lambda function triggers an EC2 instance to process the file.
+   - The EC2 instance runs a user data script that installs required packages, processes the file by appending input text, and uploads it back to S3.
+   - Details of the processed file are then recorded back in the `fovusDB` table, and the EC2 instance terminates to conclude the workflow.
 
 ## Step 1 details: AWS Configuration for S3 and IAM
 
@@ -164,7 +148,6 @@ Test your Lambda function with the following sample event:
 }
 ```
 
-
 ### API Gateway Setup for Data Insertion
 3. Define a new endpoint in API Gateway to handle data insertion.
    - Create a new resource named `/file`.
@@ -197,7 +180,114 @@ Test your Lambda function with the following sample event:
 ![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/be7824bb-cc6a-4846-8346-c904166b3790)
 
 
-### Processing Script on EC2
+## Final Step details: Processing Files with EC2 Instance Triggered by DynamoDB Event
+
+### IAM Roles Creation
+
+1. **Lambda Role (lambdaEC2):**
+   - Create an IAM role `lambdaEC2` for the Lambda function that triggers the EC2 instance.
+   - Use the following policy to grant the Lambda function permissions to interact with various AWS services. This includes EC2 for instance creation/termination, logging for CloudWatch logs, and SNS for notifications if required:
+
+```json
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "VisualEditor0",
+			"Effect": "Allow",
+			"Action": [
+				"sns:*",
+				"logs:CreateLogStream",
+				"ec2:*",
+				"logs:CreateLogGroup",
+				"logs:PutLogEvents"
+			],
+			"Resource": "*"
+		}
+	]
+}
+```
+
+   - This policy grants the Lambda function the ability to assign the launchEC2_second IAM role to EC2 instances it launches, enabling those instances to perform actions requiring specific permissions, such as accessing S3 or DynamoDB resources. The policy's condition ensures the role is only passed to the EC2 and Lambda services for security purposes.
+
+```json
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Effect": "Allow",
+			"Action": "iam:PassRole",
+			"Resource": "arn:aws:iam::665294208057:role/launchEC2_second",
+			"Condition": {
+				"StringEquals": {
+					"iam:PassedToService": [
+						"ec2.amazonaws.com",
+						"lambda.amazonaws.com"
+					]
+				}
+			}
+		}
+	]
+}
+```
+   - Attach additional policies for full DynamoDB and S3 access.
+
+2. **EC2 Role (launchEC2_second):**
+   - Create another IAM role `launchEC2_second` for the EC2 instances to be launched.
+   - This role grants the EC2 instance permissions to access S3 and DynamoDB, and to log to CloudWatch.
+
+```json
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "VisualEditor0",
+			"Effect": "Allow",
+			"Action": [
+				"s3:GetObject",
+				"s3:PutObject",
+				"dynamodb:PutItem",
+				"logs:*"
+			],
+			"Resource": "*"
+		}
+	]
+}
+```
+### Lambda Function Setup for Triggering EC2 Instances
+3. Set up a Lambda function named ProcessFileFunction.
+   - Under the Configuration tab, assign the `lambdaEC2` role to the function’s execution role.
+   - Configure the DynamoDB `fovusDB` table as a trigger for this Lambda function.
+   - Ensure the trigger is set for new item creation events.
+
+
+### EC2 Instance Scripting
+4. When a new file is uploaded and a new item is created in fovusDB, the Lambda function will:
+   - Create a new EC2 instance with a user data script to process the file.
+   - The user data script performs the following actions:
+      - Installs necessary packages and updates.
+      - Downloads the input file from S3.
+      - Appends the input text to the file.
+      - Uploads the updated file back to S3.
+      - Records the output file path in the `fovusDB` DynamoDB table.
+      - Terminates the EC2 instance upon completion.
+
+
+### Code Highlights
+5. Within the Lambda function, key pieces of code include(Details are in the command line in launchEC2Instance.mjs):
+   - `IamInstanceProfile` specifies the IAM role `launchEC2_second` to be used by the `EC2 instance`.
+   - The Bash script within the `userDataScript` variable which orchestrates the download, processing, and upload of the file.
+   - Logging commands to aid in debugging and tracking the process flow within the EC2 instance.
+
+### Deployment and Testing
+6. After implementing the Lambda function:
+   - Deploy the function in the AWS Console.
+   - Test by uploading a file through the application interface.
+   - Verify that the EC2 instance is created, the file is processed, and the DynamoDB table is updated with the output file path.
+   - Monitor CloudWatch logs for any potential issues or to confirm successful executions.
+
+
+## Debugs and Reference
 
 1. The EC2 instance is triggered via a DynamoDB event.
    - The instance will be created with the required IAM roles.
@@ -209,6 +299,8 @@ Test your Lambda function with the following sample event:
      5. Record the output details in DynamoDB.
 
 2. The EC2 instance will terminate upon completion of the script.
+
+## Real-time running condition
 
 ## Clean Up
 
