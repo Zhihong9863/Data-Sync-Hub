@@ -147,6 +147,7 @@ Test your Lambda function with the following sample event:
 2. Create an IAM role for Lambda to interact with DynamoDB.
    - Name the role `LambdaDynamoDBAccessRole`.
    - Attach an inline policy that grants full access to DynamoDB, or you can attach the managed policy `AmazonDynamoDBFullAccess`. If creating an inline policy, you can use the following JSON as a template, replacing the resource ARN with your table's ARN:
+![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/5e997760-345b-4110-90d4-bf7609852e3a)
    
 ```json
 {
@@ -162,7 +163,7 @@ Test your Lambda function with the following sample event:
 	]
 }
 ```
-![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/5e997760-345b-4110-90d4-bf7609852e3a)
+
 
 ### API Gateway Setup for Data Insertion
 3. Define a new endpoint in API Gateway to handle data insertion.
@@ -193,7 +194,6 @@ Test your Lambda function with the following sample event:
 6. Upload the ZIP package to your Lambda function via the AWS Console.
    - Ensure that you deploy the function after uploading.
 ![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/be7824bb-cc6a-4846-8346-c904166b3790)
-
 
 
 ### Processing Script on EC2
