@@ -91,7 +91,7 @@ The S3 bucket does not need to be created manually. A unique bucket will be auto
    - For the GET method, add required URL query string parameters:
      - `fileName`
      - `uuid`
-![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/d84102c8-fc45-4fd7-9036-21791227be88)
+6. ![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/d84102c8-fc45-4fd7-9036-21791227be88)
 
 ### CORS Configuration
 Make sure to enable CORS by checking all options. This is crucial to resolving cross-origin resource sharing issues.
@@ -118,6 +118,7 @@ Copy and paste the code for generating presigned URLs into the Lambda function's
 
 - The code can be written in JavaScript as `.mjs` files without needing to upload a ZIP, since no external libraries are required.
 - Once ready, deploy the function.
+![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/4bd462f0-468f-41a4-8e93-9a388653bf4e)
 
 ### Testing the Lambda Function
 Test your Lambda function with the following sample event:
