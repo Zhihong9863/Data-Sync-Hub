@@ -54,7 +54,7 @@ This application allows users to upload a text input and a file to AWS S3, then 
    - Get a presigned S3 URL to upload the file directly from the browser.
    - Save the input text and file reference to DynamoDB.
 
-## AWS Configuration Step 1
+## AWS Configuration Step 1 and Step 2
 
 1. Set up the necessary AWS services:
    - S3 Bucket: You don't need to manually create a `[S3 Bucket]` because after the project starts, when you upload files, a uuid will be automatically generated and a bucket will be created automatically.
@@ -132,7 +132,7 @@ Test your Lambda function with the following sample event:
 }
 ```
 
-## Saving Inputs and Paths in DynamoDB via API Gateway and Lambda
+## Step 2 details: Saving Inputs and Paths in DynamoDB via API Gateway and Lambda
 
 ### DynamoDB Table Setup
 1. Create the DynamoDB table where the file metadata will be stored.
@@ -140,6 +140,7 @@ Test your Lambda function with the following sample event:
    - Create a new table named `fovusDB`.
    - Set the partition key to `id` (String).
    - Leave the default settings for the rest and create the table.
+![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/fc34228a-2871-4921-b345-7d3586894743)
 
 ### IAM Role for DynamoDB Access
 2. Create an IAM role for Lambda to interact with DynamoDB.
@@ -160,18 +161,24 @@ Test your Lambda function with the following sample event:
 	]
 }
 ```
+![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/5e997760-345b-4110-90d4-bf7609852e3a)
+
 ### API Gateway Setup for Data Insertion
 3. Define a new endpoint in API Gateway to handle data insertion.
    - Create a new resource named `/file`.
    - Add a `POST` method to the `/file` resource.
    - Enable `Proxy integration` for the method.
    - Set up CORS by enabling it just as you did with the previous resource.
+![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/e7ae29e4-d5ac-48e3-a599-483a35820e34)
 
 ### Lambda Function for Data Insertion
 4. Set up the Lambda function that will insert data into DynamoDB.
    - Create a new Lambda function named `DataInsertFunction`.
    - In the `Configuration` tab, under `Permissions`, assign the `LambdaDynamoDBAccessRole` to the function’s execution role.
    - Set up the `/file` API Gateway endpoint as the trigger.
+![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/fba20d95-a3e0-4dad-ae4a-d9a1355cf178)
+![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/e054327b-8cdf-492e-a56d-627de82f90dc)
+
 
 ### Packaging External Dependencies
 5. Since the function requires the `nanoid` library, which is an external dependency, package your function and dependencies into a ZIP file.
@@ -184,6 +191,7 @@ Test your Lambda function with the following sample event:
 ### Deploying the Lambda Function
 6. Upload the ZIP package to your Lambda function via the AWS Console.
    - Ensure that you deploy the function after uploading.
+![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/be7824bb-cc6a-4846-8346-c904166b3790)
 
 
 
