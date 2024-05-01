@@ -12,13 +12,11 @@ This application allows users to upload a text input and a file to AWS S3 and st
 
 1. Clone the repository to your local machine.
    ```bash
-   git clone (https://github.com/Zhihong9863/fovusAWS.git)
+   git clone https://github.com/Zhihong9863/fovusAWS.git
    ```
-2. Navigate into the project directory.
-   ```bash
-   cd <project-name>
+
    ```
-3. Install the necessary Node.js packages.
+2. Install the necessary Node.js packages.
    ```bash
    npm install
    ```
