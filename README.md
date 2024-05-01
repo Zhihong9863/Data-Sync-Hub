@@ -1,6 +1,6 @@
 # Fovus Web Application
 
-This application allows users to upload a text input and a file to AWS S3, then processes the file in an EC2 instance, and finally records the data in a DynamoDB table.
+This application allows users to upload a text input and a file to AWS S3 and store into DynamoDB, then processes the file in an EC2 instance, and finally You will find two records in S3 and Dynamodb, one is the uploaded file, and the other is the updated file by adding the content of the text box to the file.
 
 ## Prerequisites
 
@@ -266,6 +266,9 @@ Test your Lambda function with the following sample event:
    - Ensure the trigger is set for new item creation events.
 ![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/e26c1ec7-d4e0-4a0b-a830-d6a81693dca1)
 ![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/18277479-9fb6-4e84-a7ec-0c16d157777b)
+   - upload the zip file including package.json, node_modules and launchEC2Instance.mjs as mention aboved (nanoid library is outside package dependecy).
+![image](https://github.com/Zhihong9863/fovusAWS/assets/129224800/9bb77816-419a-4123-890a-bb1495ed8392)
+
 
 
 ### EC2 Instance Scripting
@@ -296,18 +299,66 @@ Test your Lambda function with the following sample event:
 
 ## Debugs and Reference
 
-1. The EC2 instance is triggered via a DynamoDB event.
-   - The instance will be created with the required IAM roles.
-   - A startup script will handle the processing:
-     1. Download the file from S3.
-     2. Retrieve inputs from DynamoDB.
-     3. Append the text input to the file.
-     4. Upload the processed file back to S3.
-     5. Record the output details in DynamoDB.
+1. origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. 
+   - https://stackoverflow.com/questions/57009371/access-to-xmlhttprequest-at-from-origin-localhost3000-has-been-blocked
+   - https://stackoverflow.com/questions/43871637/no-access-control-allow-origin-header-is-present-on-the-requested-resource-whe
+   - https://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html
 
-2. The EC2 instance will terminate upon completion of the script.
+2. {"errorType":"Runtime.ImportModuleError","errorMessage":"Error: Cannot find module 'index'\nRequire stack:\n- /var/runtime/index.mjs","trace":
+    - https://stackoverflow.com/questions/75678115/error-cannot-find-module-index-nrequire-stack-n-var-runtime-index-mjs
+   
+3. GET https://hwfncn3pc3.execute-api.us-east-2.amazonaws.com/dev?fileName=test.txt 403 // PUT http://localhost:3000/undefined 404 (Not Found)
+   - https://stackoverflow.com/questions/68273500/api-gateway-configuration-returns-403
+  
+4. Cannot find package 'nanoid' imported from /var/task/index.mjs
+   - https://repost.aws/questions/QUEx1pFI3kSsCMRlu3UuBa_g/error-cannot-find-module-nanoid-when-invoking-lambda-function
+   - https://stackoverflow.com/questions/41750026/aws-lambda-error-cannot-find-module-var-task-index
+
+5. "errorMessage": "\"undefined\" is not valid JSON"
+   - https://blog.hubspot.com/website/json-response-error-wordpress
+
+6. aws cli command study
+   - https://stackoverflow.com/questions/33513604/call-aws-cli-from-aws-lambda
+   - https://www.pluralsight.com/cloud-guru/labs/aws/creating-an-ec2-instance-with-lambda-in-aws
+   - https://docs.aws.amazon.com/systems-manager/latest/userguide/documents-creating-content.html
+   - https://www.bluematador.com/learn/aws-cli-cheatsheet
+
+7. how to shut down ec2 instance using lambda automatically
+   - https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/instance-metadata-v2-how-it-works.html
+   - https://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/instance-identity-documents.html
+
+8. Write data to a table using the console or AWS CLI
+   - https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/getting-started-step-2.html
+
+9. Create a presigned URL for Amazon S3 using an AWS SDK
+    - https://docs.aws.amazon.com/AmazonS3/latest/userguide/example_s3_Scenario_PresignedUrl_section.html
+
+10. Cannot read properties of undefined (Reading 'S')
+    - self debug to solve event concuurency (in the code of launchEC2Instance.mjs)
+![337ef0f188b5fc956e2cff8dbd564b1](https://github.com/Zhihong9863/fovusAWS/assets/129224800/d5202cff-b84f-4157-a3c2-cbecd749c3e8)
+![313d4f5ca3192f0773e981a90ac5c86](https://github.com/Zhihong9863/fovusAWS/assets/129224800/fea764f5-e8b2-4ba1-9ccb-e9daa14276f8)
+
 
 ## Real-time running condition
+1. Project Running condition
+![5e565d9f42f2e70a55713d705f4163c](https://github.com/Zhihong9863/fovusAWS/assets/129224800/e6adae31-bb6d-4140-b68c-2346ae239fe8)
+
+2.EC2 Running condition, running and terminated automatically
+![e1e370a813ed50b167576458a3493192_](https://github.com/Zhihong9863/fovusAWS/assets/129224800/5c261d77-7584-488f-9db5-08e4022d21ea)
+![14c8e92c38821f6849d0982058ae5add_](https://github.com/Zhihong9863/fovusAWS/assets/129224800/75b0ec91-0635-49fe-9b24-c488a1c5da81)
+![631281f0a539d2a2f22a89ce5ac2f093_](https://github.com/Zhihong9863/fovusAWS/assets/129224800/df73d10f-9a1d-49a9-8e26-99e6cade4005)
+![ae02db427e4e5242044f7ad13ea96e63_](https://github.com/Zhihong9863/fovusAWS/assets/129224800/e2f94238-94d5-497d-802f-5437367e89cd)
+
+3. Store into S3, each user has their itself bucket, using uuid to distinuish, and has input file and output file(output file here I used `date` naming them to distinguish the difference) 
+![6fc6dd77c963c98fec21e05863f4871e_](https://github.com/Zhihong9863/fovusAWS/assets/129224800/fcededca-62cf-4392-a331-05a2485a4ab9)
+![0b42224f82f3f06072f4f224ed66d22f_](https://github.com/Zhihong9863/fovusAWS/assets/129224800/07424776-b943-4e48-a1a7-caca660951c2)
+
+4. Store into DynamoDB, and has input file and output file
+![2ed108e591845d378618609cf971a366_](https://github.com/Zhihong9863/fovusAWS/assets/129224800/be2c8bbf-b647-40a7-bf3b-0f55dd9d898f)
+
+5. Download the updated file again, and you can see that the word successful has been successfully added to the original hello world of the file
+![19f399b0b213d4e92414d2bdf73086af_](https://github.com/Zhihong9863/fovusAWS/assets/129224800/fed51689-170f-4967-b1d7-dab1afc65de1)
+
 
 ## Clean Up
 
@@ -316,7 +367,8 @@ Test your Lambda function with the following sample event:
    - DynamoDB tables
    - EC2 instances
 
-## Support
+## Support And Completion status
 
-For any queries or issues, please open an issue on the GitHub repository.
+**all basic requirements have finished**
+For any queries or issues, please email me at "hezhihong98@gmail.com"
 
