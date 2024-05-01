@@ -341,25 +341,31 @@ For any images or diagrams referenced in debugging:
 - ![Another Image Description](https://github.com/Zhihong9863/fovusAWS/assets/129224800/fea764f5-e8b2-4ba1-9ccb-e9daa14276f8)
 
 
-## Real-time running condition
-1. **Project Running condition**
-![5e565d9f42f2e70a55713d705f4163c](https://github.com/Zhihong9863/fovusAWS/assets/129224800/e6adae31-bb6d-4140-b68c-2346ae239fe8)
+## Real-time Running Condition
 
-2.**EC2 Running condition, running and terminated automatically**
-![e1e370a813ed50b167576458a3493192_](https://github.com/Zhihong9863/fovusAWS/assets/129224800/5c261d77-7584-488f-9db5-08e4022d21ea)
-![14c8e92c38821f6849d0982058ae5add_](https://github.com/Zhihong9863/fovusAWS/assets/129224800/75b0ec91-0635-49fe-9b24-c488a1c5da81)
-![631281f0a539d2a2f22a89ce5ac2f093_](https://github.com/Zhihong9863/fovusAWS/assets/129224800/df73d10f-9a1d-49a9-8e26-99e6cade4005)
-![ae02db427e4e5242044f7ad13ea96e63_](https://github.com/Zhihong9863/fovusAWS/assets/129224800/e2f94238-94d5-497d-802f-5437367e89cd)
+### 1. Project Running Condition
+- The image below shows the current operational status of the project.
+![Project Running Condition](https://github.com/Zhihong9863/fovusAWS/assets/129224800/e6adae31-bb6d-4140-b68c-2346ae239fe8)
 
-3. **Store into S3, each user has their itself bucket, using uuid to distinuish, and has input file and output file(output file here I used `date` naming them to distinguish the difference)**
-![6fc6dd77c963c98fec21e05863f4871e_](https://github.com/Zhihong9863/fovusAWS/assets/129224800/fcededca-62cf-4392-a331-05a2485a4ab9)
-![0b42224f82f3f06072f4f224ed66d22f_](https://github.com/Zhihong9863/fovusAWS/assets/129224800/07424776-b943-4e48-a1a7-caca660951c2)
+### 2. EC2 Running Condition
+- Below are images showing the EC2 instance in operation and being terminated automatically.
+![EC2 Running - Initial](https://github.com/Zhihong9863/fovusAWS/assets/129224800/5c261d77-7584-488f-9db5-08e4022d21ea)
+![EC2 Running - Mid Operation](https://github.com/Zhihong9863/fovusAWS/assets/129224800/75b0ec91-0635-49fe-9b24-c488a1c5da81)
+![EC2 Running - Pre Termination](https://github.com/Zhihong9863/fovusAWS/assets/129224800/df73d10f-9a1d-49a9-8e26-99e6cade4005)
+![EC2 Terminated](https://github.com/Zhihong9863/fovusAWS/assets/129224800/e2f94238-94d5-497d-802f-5437367e89cd)
 
-4. **Store into DynamoDB, and has input file and output file**
-![2ed108e591845d378618609cf971a366_](https://github.com/Zhihong9863/fovusAWS/assets/129224800/be2c8bbf-b647-40a7-bf3b-0f55dd9d898f)
+### 3. S3 Storage
+- Each user has their own bucket, distinguished by UUID. Below are images showing the input and output files stored in S3. The output files are named using a `date` format to show differences.
+![S3 Input File](https://github.com/Zhihong9863/fovusAWS/assets/129224800/fcededca-62cf-4392-a331-05a2485a4ab9)
+![S3 Output File](https://github.com/Zhihong9863/fovusAWS/assets/129224800/07424776-b943-4e48-a1a7-caca660951c2)
 
-5. **Download the updated file again, and you can see that the word successful has been successfully added to the original hello world of the file**
-![19f399b0b213d4e92414d2bdf73086af_](https://github.com/Zhihong9863/fovusAWS/assets/129224800/fed51689-170f-4967-b1d7-dab1afc65de1)
+### 4. DynamoDB Storage
+- The following image shows how the input and output files are stored in DynamoDB.
+![DynamoDB Storage](https://github.com/Zhihong9863/fovusAWS/assets/129224800/be2c8bbf-b647-40a7-bf3b-0f55dd9d898f)
+
+### 5. Download and Verify
+- The final image below illustrates that the word "successful" has been added to the original "hello world" in the file, confirming the successful update.
+![File Verification](https://github.com/Zhihong9863/fovusAWS/assets/129224800/fed51689-170f-4967-b1d7-dab1afc65de1)
 
 
 ## Clean Up
