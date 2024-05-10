@@ -12,7 +12,7 @@ This application allows users to upload a text input and a file to AWS S3 and st
 
 1. Clone the repository to your local machine.
    ```bash
-   git clone https://github.com/Zhihong9863/fovusAWS.git
+   git clone https://github.com/Zhihong9863/Data-Sync-Hub.git
 
 2. Install the necessary Node.js packages.
    ```bash
@@ -30,6 +30,8 @@ This application allows users to upload a text input and a file to AWS S3 and st
 2. Upload a file and input text using the web UI.
 
 ## AWS Configuration and Automation Flow
+
+**Note: Any naming prefix with `fovus` below is for personal preference only. Please modify any of your names when naming**
 
 1. S3 Bucket & DynamoDB Table:
    - A unique `S3 Bucket` is automatically created when you start the project and upload files, identified by a `UUID`.
@@ -373,6 +375,5 @@ For any images or diagrams referenced in debugging:
 
 ## Support And Completion status
 
-1. **all basic requirements have finished**
-2. For any queries or issues, please email me at "hezhihong98@gmail.com"
+1. For any queries or issues, please email me at "hezhihong98@gmail.com"
 
