@@ -1,4 +1,4 @@
-# Fovus Web Application
+# Data Sync Hub
 
 This application allows users to upload a text input and a file to AWS S3 and store into DynamoDB, then processes the file in an EC2 instance, and finally You will find two records in S3 and Dynamodb, one is the uploaded file, and the other is the updated file by adding the content of the text box to the file.
 
